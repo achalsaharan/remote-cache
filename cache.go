@@ -1,10 +1,10 @@
 package main
 
-type CacheEntry struct {
+type CacheEntryString struct {
 	valueType string
 	value     string
 	ttl       int64
-	// valueSize int
+	valueSize int
 }
 
-var Cache = make(map[string]CacheEntry)
+var Cache = make(map[string]interface{})

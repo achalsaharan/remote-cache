@@ -13,20 +13,21 @@ func CheckExpire(key string) {
 		return
 	}
 
-	// no expiry set on key
-	if value.ttl == int64(-1) {
-		return
-	}
+	switch v := value.(type) {
+	case CacheEntryString:
 
-	// delte key
-	if value.ttl <= time.Now().UnixMilli() {
-		delete(Cache, key)
-	}
+		if v.ttl == int64(-1) {
+			return
+		}
 
+		if v.ttl <= time.Now().UnixMilli() {
+			delete(Cache, key)
+		}
+	}
 }
 
 func Set(key string, value string) {
-	entry := CacheEntry{"string", value, -1}
+	entry := CacheEntryString{"string", value, -1, len(value)}
 	Cache[key] = entry
 }
 
@@ -40,7 +41,13 @@ func Get(key string) (string, error) {
 		return "", errors.New("key not found")
 	}
 
-	return value.value, nil
+	v, ok := value.(CacheEntryString)
+
+	if !ok {
+		return "", errors.New("key of wrong type")
+	}
+
+	return v.value, nil
 }
 
 func Del(key string) {
@@ -53,10 +60,13 @@ func Expire(key string, ttl int64) int {
 		return 0
 	}
 
-	Cache[key] = CacheEntry{
-		valueType: "string",
-		value:     value.value,
-		ttl:       time.Now().UnixMilli() + ttl,
+	switch v := value.(type) {
+	case CacheEntryString:
+		Cache[key] = CacheEntryString{
+			valueType: "string",
+			value:     v.value,
+			ttl:       time.Now().UnixMilli() + ttl*1000,
+		}
 	}
 
 	return 1
@@ -70,5 +80,17 @@ func Ttl(key string) int64 {
 		return -2
 	}
 
-	return (time.Now().UnixMilli() - value.ttl) / int64(1000)
+	switch v := value.(type) {
+	case CacheEntryString:
+		// ttl not set
+		if v.ttl == -1 {
+			return -1
+		}
+
+		return (v.ttl - time.Now().UnixMilli()) / int64(1000)
+
+	default:
+		return -2
+	}
+
 }

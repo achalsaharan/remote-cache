@@ -1,12 +1,14 @@
 ## Commands
 
+## String Values
+
 ### SET
 
-**SET key "value"**
+SET key "value"
 
-| Return Value | Description        |
-| ------------ | ------------------ |
-| "OK"         | SET was performend |
+| Return Value | Description       |
+| ------------ | ----------------- |
+| "OK"         | SET was performed |
 
 ### GET
 
@@ -17,7 +19,27 @@ GET key
 | string value | key exists      |
 | nil          | key not present |
 
-## DEL
+## Hash Map Values
+
+### HSET
+
+HSET key field value
+
+| Return Value | Description                  |
+| ------------ | ---------------------------- |
+| int          | no of fields that were added |
+
+### HGET
+
+HGET key field value
+
+| Return Value | Description |
+| ------------ | ----------- |
+| string       | value       |
+
+## Common
+
+### DEL
 
 DEL key
 
@@ -25,7 +47,7 @@ DEL key
 | ------------ | ---------------------------- |
 | integer      | no of keys that were removed |
 
-## EXPIRE
+### EXPIRE
 
 EXPIRE key
 
@@ -46,10 +68,10 @@ TTL key
 
 ---
 
-## Roadmap
+## Road map
 
-1. Add support for different value types (string and int)
-2. Concurrency: Try out different type of locking stratergies
+1. Add support for different value types (string and hash map)
+2. Concurrency: Try out different type of locking strategies
 3. Write code to check if locking is working properly (fire multiple requests with go routines?)
 4. Communication: start with HTTP, move to raw TCP. Document the requests size and performance improvements
 5. Maintaining memory used by cache
@@ -60,11 +82,14 @@ TTL key
 
 ## Problems
 
-1. Supporting different value types (int and string).
+1. Supporting different value types (int and hash map).
 
-   - make different maps for different type of values?
-   - is there a way to have a map that supports multiple values
+   - [ ] make different maps for different type of values?
 
-2. keeping track of memory consumpltion
+   - [ ] is there a way to have a map that supports multiple values
+
+   - [ ] Update the website
+
+2. keeping track of memory consumption
 
    - what method to use?
